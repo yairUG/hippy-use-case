@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Study: HIPPY x UG Labs</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --peach: #FFDAB9;
+            --lavender: #E6E6FA;
+            --sky: #BAE1FF;
+            --mint: #BFFCC6;
+            --charcoal: #1f2937;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.4);
+            --border: rgba(255, 255, 255, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #fdfbfb;
+            color: var(--charcoal);
+            overflow-x: hidden;
+            line-height: 1.6;
+            cursor: none; 
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+
+        /* --- Custom Liquid Cursor --- */
+        #cursor-dot {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--charcoal);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        #cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1.5px solid var(--charcoal);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease-out, background 0.3s, border-color 0.3s;
+        }
+
+        /* --- Background Elements --- */
+        .blob-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.5;
+            border-radius: 50%;
+        }
+
+        /* --- Layout Sections --- */
+        section {
+            min-height: auto;
+            padding: 4vw 10vw; /* Reduced from 8vw */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 3rem; /* Reduced from 4rem */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.03);
+            margin: 1.5rem 0; /* Reduced from 2rem */
+        }
+
+        /* --- Header Section --- */
+        header {
+            min-height: 90vh; /* Reduced slightly */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo-img {
+            max-height: 110px; /* Increased from 80px */
+            width: auto;
+            object-fit: contain;
+        }
+
+        .expertise-badge {
+            background: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            color: #ea580c;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 5.5vw, 4.2rem);
+            line-height: 1.15;
+            max-width: 1000px;
+            word-break: keep-all; /* Prevent awkward breaks */
+        }
+
+        .no-break {
+            white-space: nowrap;
+        }
+
+        .stagger-char { display: inline-block; }
+
+        /* --- Unique Grid --- */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .unique-card {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 30px;
+            text-align: center;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .unique-card i {
+            display: block;
+            margin: 0 auto 1.5rem;
+            color: var(--charcoal);
+        }
+
+        /* --- Tech Highlights --- */
+        .tech-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .compliance-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .compliance-row img {
+            height: 45px;
+            filter: grayscale(1);
+            opacity: 0.6;
+            transition: all 0.3s;
+        }
+
+        .compliance-row img:hover {
+            filter: grayscale(0);
+            opacity: 1;
+        }
+
+        /* --- ASR Performance --- */
+        .asr-box {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .asr-img {
+            width: 100%;
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+        }
+
+        /* --- Video Containers --- */
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16 / 10.5; /* Increased ratio to show settings bar */
+            background: #000;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .video-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* --- Skill Cards --- */
+        .skill-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4vw;
+            align-items: center;
+            margin-bottom: 4rem; /* Reduced from 8rem */
+        }
+
+        .skill-detail.rev {
+            direction: rtl;
+        }
+
+        .skill-detail.rev .skill-content {
+            direction: ltr;
+        }
+
+        .skill-img {
+            width: 100%;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        }
+
+        /* --- Testimonials --- */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .testimonial-card {
+            padding: 2.5rem;
+            border-radius: 30px;
+            background: white;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 5rem 10vw; /* Reduced from 8rem */
+            background: #111827;
+            color: white;
+            text-align: center;
+            border-radius: 60px 60px 0 0;
+        }
+
+        footer h2 {
+            font-size: 1.5rem; /* Smaller footer header */
+            margin-bottom: 1rem;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: linear-gradient(90deg, #a78bfa, #fdba74);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 900px) {
+            .tech-split, .asr-box, .skill-detail { grid-template-columns: 1fr; }
+            section { padding: 10vw 5vw; }
+            .brand-header { flex-direction: column; gap: 2rem; }
+            .logo-img { max-height: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Liquid Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-follower"></div>
+
+    <!-- Background Canvas -->
+    <div class="blob-container">
+        <div class="blob" style="width: 60vw; height: 60vw; background: var(--peach); top: -20%; right: -10%;"></div>
+        <div class="blob" style="width: 50vw; height: 50vw; background: var(--lavender); bottom: -10%; left: -10%;"></div>
+        <div class="blob" style="width: 40vw; height: 40vw; background: var(--mint); top: 30%; left: 10%;"></div>
+        <div class="blob" style="width: 35vw; height: 35vw; background: var(--sky); top: 10%; right: 20%;"></div>
+    </div>
+
+    <!-- HEADER -->
+    <header id="hero">
+        <div class="brand-header">
+            <img src="hippy-international-logo.jpg" alt="HIPPY" class="logo-img" onerror="this.src='https://via.placeholder.com/300x120?text=HIPPY'">
+            <img src="UG-logo.png" alt="UG Labs" class="logo-img" onerror="this.src='https://via.placeholder.com/250x120?text=UG+LABS'">
+        </div>
+        <div class="expertise-badge">Voice AI for Family Discovery</div>
+        <h1 id="hero-title">Using AI for Meaningful <span class="no-break">Parent-Child</span> Experiences</h1>
+    </header>
+
+    <!-- UNIQUE HIGHLIGHTS -->
+    <section id="uniqueness">
+        <div class="glass-card">
+            <h2 style="text-align: center; margin-bottom: 2.5rem;">Why This Case Study is Unique</h2>
+            <div class="grid-3">
+                <div class="unique-card">
+                    <i data-lucide="users" size="40"></i>
+                    <h4>Multi-User Interaction</h4>
+                    <p>Designed for group discovery where multiple people—parent and child—interact with the game state simultaneously.</p>
+                </div>
+                <div class="unique-card">
+                    <i data-lucide="mic" size="40"></i>
+                    <h4>Pre-Literate ASR Challenges</h4>
+                    <p>Solving complex voice recognition for young children whose language skills are still developing in real-time environments.</p>
+                </div>
+                <div class="unique-card">
+                    <i data-lucide="activity" size="40"></i>
+                    <h4>Hybrid Kinetic Experience</h4>
+                    <p>A seamless blend of physical movement and digital narrative cues for a holistic learning loop.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TECH BRIDGE -->
+    <section id="tech">
+        <div class="tech-split">
+            <div>
+                <h2 style="font-size: 2.8rem; margin-bottom: 1.5rem;">A Technical Bridge for Discovery</h2>
+                <p style="font-size: 1.15rem; margin-bottom: 1.5rem;">
+                    By partnering with UG Labs, HIPPY has digitized their curriculum into a sophisticated, voice-AI agent designed for children ages 3-5. <strong>UG</strong> provides a secure technical infrastructure where complex logic is delivered via an intuitive interface.
+                </p>
+                <div class="glass-card" style="padding: 2rem; margin: 0;">
+                    <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+                        <i data-lucide="shield-check"></i> Safety & Compliance
+                    </h3>
+                    <p><strong>UG</strong> is the only voice-to-voice agentic framework that is COPPA and GDPR/GDPR-K compliant from the ground up.</p>
+                    <div class="compliance-row">
+                        <img src="kidsafe.png" alt="Kidsafe" onerror="this.style.display='none'">
+                        <img src="coppa.png" alt="COPPA" onerror="this.style.display='none'">
+                        <img src="gdpr.png" alt="GDPR" onerror="this.style.display='none'">
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card" style="margin-top: 2rem;">
+                <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 1.2rem;">
+                    <i data-lucide="cpu"></i> System Features
+                </h3>
+                <ul style="list-style: none;">
+                    <li style="margin-bottom: 0.8rem; padding-left: 1.5rem; position: relative;">
+                        <span style="position: absolute; left: 0; color: #a78bfa;">•</span> Advanced interruption handling and natural turn-taking.
+                    </li>
+                    <li style="margin-bottom: 0.8rem; padding-left: 1.5rem; position: relative;">
+                        <span style="position: absolute; left: 0; color: #a78bfa;">•</span> Compliant speaker ID optimized for multi-user discovery.
+                    </li>
+                    <li style="margin-bottom: 0.8rem; padding-left: 1.5rem; position: relative;">
+                        <span style="position: absolute; left: 0; color: #a78bfa;">•</span> Visemes and emotion integration for animated characters.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ASR PERFORMANCE -->
+    <section id="asr">
+        <h2 style="text-align: center; margin-bottom: 3rem;">Optimized for the Youngest Voices</h2>
+        <div class="asr-box">
+            <div class="glass-card" style="padding: 1.5rem;">
+                <img src="wer.png" alt="ASR Chart" class="asr-img" onerror="this.src='https://via.placeholder.com/600x400/87CEEB/ffffff?text=ASR+Performance+Chart'">
+            </div>
+            <div>
+                <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">
+                    As opposed to adult-centric market solutions, <strong>UG's</strong> ASR was trained specifically on children's vocal patterns, delivering industry-leading accuracy for pre-literate users.
+                </p>
+                <div class="video-container" style="max-width: 450px; margin: 0;">
+                    <iframe src="https://drive.google.com/file/d/1EKbL9RTKR37Xe_F3TMdAeStf7cTs-CYs/preview?t=3" class="video-iframe" allow="autoplay"></iframe>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; opacity: 0.6;">ASR competitor comparison</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOND SECTION -->
+    <section id="bond">
+        <div class="glass-card">
+            <div style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">
+                <h2>Supporting the Parent-Child Bond</h2>
+                <p style="font-size: 1.2rem;"><strong>UG</strong> acts as a social mediator, facilitating conversational scenarios that help families navigate emotions and practice collaborative discovery.</p>
+            </div>
+            <img src="Gemini_Generated_Image_4m8ax4m8ax4m8ax4.png" alt="Bonding" class="skill-img" style="max-height: 450px; object-fit: cover; margin-bottom: 3rem;" onerror="this.src='https://via.placeholder.com/1200x500?text=Parent-Child+Bond'">
+            
+            <div class="grid-3">
+                <div style="text-align: center;">
+                    <i data-lucide="heart-handshake" size="40"></i>
+                    <h3>Parental Agency</h3>
+                    <p>UG handles instructional delivery, allowing parents to focus on guidance without pedagogical heavy lifting.</p>
+                </div>
+                <div style="text-align: center;">
+                    <i data-lucide="gauge" size="40"></i>
+                    <h3>Dynamic Pacing</h3>
+                    <p>Sophisticated turn-taking logic that recognizes the subtle pauses needed for child reflection.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VIDEO EVIDENCE -->
+    <section id="evidence">
+        <h2 style="text-align: center; margin-bottom: 2.5rem;">Evidence of Engagement</h2>
+        <div class="video-container" style="max-width: 850px; margin: 0 auto;">
+            <iframe src="https://drive.google.com/file/d/1NvHxcqOE4fD9_kn8QDXpHbFUrY3N-z8t/preview" class="video-iframe" allow="autoplay"></iframe>
+        </div>
+        <p style="text-align: center; margin-top: 1.5rem; font-weight: 700;">HIPPY CEO Dr. Miriam Westheimer on the UG Labs Partnership</p>
+    </section>
+
+    <!-- SKILL MODULES -->
+    <section id="skills">
+        <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2.8rem;">4 Basic Developmental Skill Modules</h2>
+        
+        <div class="video-container" style="max-width: 900px; margin: 0 auto 5rem;">
+            <iframe src="https://drive.google.com/file/d/1eoo6bneIGXpgkZKj811GbkSx1Zn4OA8f/preview" class="video-iframe" allow="autoplay"></iframe>
+        </div>
+
+        <!-- Phonics -->
+        <div class="skill-detail">
+            <div class="skill-content">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom: 1.2rem;">
+                    <i data-lucide="message-square" style="color:#a78bfa"></i>
+                    <h3>Phonics</h3>
+                </div>
+                <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Voice-first literacy tools designed for pre-literate children. <strong>UG</strong> reinforces sounds and vocabulary through natural dialogue loops.</p>
+                <div class="video-container" style="max-width: 380px;">
+                    <iframe src="https://drive.google.com/file/d/1gzPfQDCD3q4G4ILc9s14dxxaQHiMsQ88/preview?t=3" class="video-iframe" allow="autoplay"></iframe>
+                </div>
+            </div>
+            <img src="phonics2.png" alt="Phonics" class="skill-img" onerror="this.src='https://via.placeholder.com/600x400?text=Phonics+Module'">
+        </div>
+
+        <!-- Literacy -->
+        <div class="skill-detail rev">
+            <div class="skill-content">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom: 1.2rem;">
+                    <i data-lucide="book-open" style="color:#fdba74"></i>
+                    <h3>Literacy</h3>
+                </div>
+                <p style="font-size: 1.1rem;">Interactive storytelling that encourages children to shape the narrative collaboratively, building active comprehension.</p>
+            </div>
+            <img src="literacy2.png" alt="Literacy" class="skill-img" onerror="this.src='https://via.placeholder.com/600x400?text=Literacy+Module'">
+        </div>
+
+        <!-- Science -->
+        <div class="skill-detail">
+            <div class="skill-content">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom: 1.2rem;">
+                    <i data-lucide="flask-conical" style="color:#10b981"></i>
+                    <h3>Science</h3>
+                </div>
+                <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Hands-on experiments guided by <strong>UG's</strong> logic. Using simple objects, families explore cause-and-effect through shared discovery.</p>
+                <div class="video-container" style="max-width: 380px;">
+                    <iframe src="https://drive.google.com/file/d/1ast-N2lZ6imtJJrCcr0ztDxaOx-2fXgO/preview?t=3" class="video-iframe" allow="autoplay"></iframe>
+                </div>
+            </div>
+            <img src="science2.png" alt="Science" class="skill-img" onerror="this.src='https://via.placeholder.com/600x400?text=Science+Module'">
+        </div>
+
+        <!-- Motor Skills -->
+        <div class="skill-detail rev">
+            <div class="skill-content">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom: 1.2rem;">
+                    <i data-lucide="accessibility" style="color:#3b82f6"></i>
+                    <h3>Motor Skills</h3>
+                </div>
+                <p style="font-size: 1.1rem;">Gross motor challenges that get children acting out instructions, ensuring learning is a physical and high-energy experience.</p>
+            </div>
+            <img src="movement2.png" alt="Motor Skills" class="skill-img" onerror="this.src='https://via.placeholder.com/600x400?text=Motor+Skills+Module'">
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials">
+        <h2 style="text-align: center; margin-bottom: 3rem;">Voices from the Field</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card" style="border-top: 5px solid var(--peach);">
+                <i data-lucide="quote" size="24" style="opacity:0.2; margin-bottom: 0.8rem;"></i>
+                <p style="font-style: italic; margin-bottom: 1rem;">“i love this game”</p>
+                <strong style="font-size: 0.9rem;">3.5 yo Ray</strong>
+            </div>
+            <div class="testimonial-card" style="border-top: 5px solid var(--lavender);">
+                <i data-lucide="quote" size="24" style="opacity:0.2; margin-bottom: 0.8rem;"></i>
+                <p style="font-style: italic; margin-bottom: 1rem;">“This game is so awesome”</p>
+                <strong style="font-size: 0.9rem;">5 yo Sofia</strong>
+            </div>
+            <div class="testimonial-card" style="border-top: 5px solid var(--sky);">
+                <i data-lucide="quote" size="24" style="opacity:0.2; margin-bottom: 0.8rem;"></i>
+                <p style="font-style: italic; margin-bottom: 1rem;">“He's such an active kid, and <strong>UG</strong> got him to act things out so learning was so much fun.”</p>
+                <strong style="font-size: 0.9rem;">Sara, Amir’s Mom</strong>
+            </div>
+            <div class="testimonial-card" style="border-top: 5px solid var(--mint);">
+                <i data-lucide="quote" size="24" style="opacity:0.2; margin-bottom: 0.8rem;"></i>
+                <p style="font-style: italic; margin-bottom: 1rem;">“I was surprised by how quickly Becca felt comfortable chatting. It was amazing.”</p>
+                <strong style="font-size: 0.9rem;">Sam, Becca’s Dad</strong>
+            </div>
+            <div class="testimonial-card" style="border-top: 5px solid var(--peach);">
+                <i data-lucide="quote" size="24" style="opacity:0.2; margin-bottom: 0.8rem;"></i>
+                <p style="font-style: italic; margin-bottom: 1rem;">“I love that I can talk to it about anything”</p>
+                <strong style="font-size: 0.9rem;">5 yo Mina</strong>
+            </div>
+            <div class="testimonial-card" style="border-top: 5px solid var(--lavender);">
+                <i data-lucide="quote" size="24" style="opacity:0.2; margin-bottom: 0.8rem;"></i>
+                <p style="font-style: italic; margin-bottom: 1rem;">“Alonzo loved it, was focused throughout the activity and wanted more at the end.”</p>
+                <strong style="font-size: 0.9rem;">Luis, Alonzo’s Dad</strong>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <h2>Let's build something delightful.</h2>
+        <img src="UG-logo.png" alt="UG Labs" style="height: 50px; filter: brightness(0) invert(1); margin-bottom: 1rem;" onerror="this.src='https://via.placeholder.com/150x50?text=UG+LABS'">
+        <p style="opacity: 0.6; font-size: 0.9rem; margin-bottom: 1.5rem;">The only AI engine designed for children.</p>
+        <a href="mailto:sales@uglabs.io" class="cta-btn">Request a Demo</a>
+        <p style="margin-top: 3rem; opacity: 0.3; font-size: 0.7rem;">© 2024 UG Labs. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // 1. Initialize Icons
+        lucide.createIcons();
+
+        // 2. Liquid Cursor Logic
+        const dot = document.getElementById('cursor-dot');
+        const follower = document.getElementById('cursor-follower');
+        
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(dot, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(follower, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.3 });
+        });
+
+        // Hover effect for cursor
+        const interactives = document.querySelectorAll('a, .unique-card, .glass-card, .testimonial-card, iframe');
+        interactives.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                gsap.to(follower, { scale: 1.8, background: 'rgba(0,0,0,0.03)', borderColor: 'transparent', duration: 0.3 });
+            });
+            el.addEventListener('mouseleave', () => {
+                gsap.to(follower, { scale: 1, background: 'transparent', borderColor: 'var(--charcoal)', duration: 0.3 });
+            });
+        });
+
+        // 3. Hero Character Animation
+        const title = document.getElementById('hero-title');
+        // Simple entry for title to avoid splitting the no-break span
+        window.onload = () => {
+            gsap.from("#hero-title", {
+                y: 50,
+                opacity: 0,
+                duration: 1.2,
+                ease: "power3.out"
+            });
+            gsap.from(".expertise-badge", {
+                scale: 0.8,
+                opacity: 0,
+                duration: 1,
+                delay: 0.3
+            });
+        };
+
+        // 4. Scroll Driven Narratives
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Blob Parallax & Movement
+        gsap.to(".blob", {
+            scrollTrigger: {
+                scrub: 1
+            },
+            y: (i) => -200 * (i + 1),
+            rotation: 180,
+            scale: 1.1
+        });
+
+        // Section Reveal Transitions
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+            gsap.from(section, {
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top 85%",
+                },
+                opacity: 0,
+                y: 30,
+                duration: 1,
+                ease: "power2.out"
+            });
+        });
+
+        // 5. Magnetic Hero Element
+        const hero = document.getElementById('hero');
+        hero.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const x = (clientX / window.innerWidth - 0.5) * 30;
+            const y = (clientY / window.innerHeight - 0.5) * 30;
+            gsap.to("#hero-title", { x, y, duration: 0.6, ease: "power2.out" });
+        });
+        
+        hero.addEventListener('mouseleave', () => {
+            gsap.to("#hero-title", { x: 0, y: 0, duration: 0.6 });
+        });
+
+    </script>
+</body>
+</html>
