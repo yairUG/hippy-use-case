@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UG Kids Lab Overview</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --peach: #FFDAB9;
+            --peach-light: #FFF5EB;
+            --lavender: #E6E6FA;
+            --lavender-light: #F5F5FF;
+            --sky: #BAE1FF;
+            --sky-light: #EBF7FF;
+            --mint: #BFFCC6;
+            --mint-light: #EDFFF0;
+            --charcoal: #1f2937;
+            --charcoal-light: #374151;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.5);
+            --border: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #fdfbfb;
+            color: var(--charcoal);
+            overflow-x: hidden;
+            line-height: 1.7;
+            cursor: none;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: var(--charcoal-light);
+        }
+
+        /* --- Custom Liquid Cursor --- */
+        #cursor-dot {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--charcoal);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        #cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1.5px solid var(--charcoal);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease-out, background 0.3s, border-color 0.3s;
+        }
+
+        /* --- Background Elements --- */
+        .blob-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.4;
+            border-radius: 50%;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 5vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(253, 251, 251, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        nav img {
+            height: 45px;
+        }
+
+        /* --- Layout Sections --- */
+        section {
+            min-height: auto;
+            padding: 5vw 10vw;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 3rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.03);
+            margin: 1.5rem 0;
+        }
+
+        /* --- Header Section --- */
+        header {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+        }
+
+        .expertise-badge {
+            background: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            color: #7c3aed;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5.5vw, 4rem);
+            line-height: 1.15;
+            max-width: 900px;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+        }
+
+        .hero-visual {
+            width: 100%;
+            max-width: 700px;
+            margin: 2rem auto;
+        }
+
+        .hero-visual img {
+            width: 100%;
+            border-radius: 30px;
+        }
+
+        /* --- Stats Grid --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--charcoal);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--charcoal-light);
+            opacity: 0.8;
+        }
+
+        /* --- Section Headers --- */
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* --- Content Blocks --- */
+        .content-block {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .content-block p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Challenge Cards --- */
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .challenge-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 30px;
+            border-left: 4px solid var(--peach);
+            transition: transform 0.3s ease;
+        }
+
+        .challenge-card:nth-child(2) {
+            border-left-color: var(--lavender);
+        }
+
+        .challenge-card:nth-child(3) {
+            border-left-color: var(--sky);
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .challenge-card h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .challenge-card p {
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        /* --- Waveform Section --- */
+        .waveform-section {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-top: 3rem;
+        }
+
+        .waveform-img {
+            width: 100%;
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+        }
+
+        /* --- Two Column Layout --- */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .two-col.reverse {
+            direction: rtl;
+        }
+
+        .two-col.reverse > * {
+            direction: ltr;
+        }
+
+        .two-col img {
+            width: 100%;
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+        }
+
+        /* --- Taxonomy Cards --- */
+        .taxonomy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .taxonomy-card {
+            background: white;
+            padding: 1.8rem;
+            border-radius: 24px;
+            border-left: 5px solid #10b981;
+            position: relative;
+        }
+
+        .taxonomy-card.redirect {
+            border-left-color: #f59e0b;
+        }
+
+        .taxonomy-card.escalate {
+            border-left-color: #ef4444;
+        }
+
+        .taxonomy-card .context-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .taxonomy-card .context-badge.game {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .taxonomy-card .context-badge.sibling {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .taxonomy-card .context-badge.safety {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .taxonomy-card .quote {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--charcoal);
+            margin-bottom: 0.8rem;
+        }
+
+        .taxonomy-card .response {
+            font-size: 0.95rem;
+            color: var(--charcoal-light);
+        }
+
+        /* --- Pipeline Section --- */
+        .pipeline-container {
+            margin-top: 2rem;
+        }
+
+        .pipeline-container img {
+            width: 100%;
+            border-radius: 30px;
+        }
+
+        .pipeline-outputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .pipeline-output {
+            background: white;
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.95rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+        }
+
+        /* --- HIPPY Section --- */
+        .hippy-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .hippy-header img {
+            height: 80px;
+        }
+
+        .session-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .session-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.2rem;
+            padding: 1.2rem 1.5rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .step-number.step-1 { background: var(--peach); }
+        .step-number.step-2 { background: var(--lavender); }
+        .step-number.step-3 { background: var(--mint); }
+        .step-number.step-4 { background: var(--sky); }
+
+        .step-content strong {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--charcoal-light);
+            margin-bottom: 0.3rem;
+        }
+
+        .step-content p {
+            font-size: 1rem;
+            margin: 0;
+            font-style: italic;
+        }
+
+        .result-callout {
+            background: linear-gradient(135deg, var(--mint-light), var(--sky-light));
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 2rem;
+        }
+
+        /* --- Social Configurations --- */
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .social-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.04);
+        }
+
+        .social-card h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .social-card .config-label {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .social-card:nth-child(1) .config-label {
+            background: var(--peach-light);
+            color: #c2410c;
+        }
+
+        .social-card:nth-child(2) .config-label {
+            background: var(--mint-light);
+            color: #15803d;
+        }
+
+        .social-card:nth-child(3) .config-label {
+            background: var(--lavender-light);
+            color: #6d28d9;
+        }
+
+        .social-card p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* --- Placeholder for Missing Assets --- */
+        .asset-placeholder {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            border: 2px dashed #d1d5db;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 2rem;
+            min-height: 300px;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 900px) {
+            section {
+                padding: 10vw 5vw;
+            }
+
+            .two-col,
+            .waveform-section {
+                grid-template-columns: 1fr;
+            }
+
+            .two-col.reverse {
+                direction: ltr;
+            }
+
+            nav {
+                padding: 1rem 5vw;
+            }
+
+            nav img {
+                height: 35px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .hippy-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Liquid Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-follower"></div>
+
+    <!-- Background Canvas -->
+    <div class="blob-container">
+        <div class="blob" style="width: 60vw; height: 60vw; background: var(--peach); top: -20%; right: -10%;"></div>
+        <div class="blob" style="width: 50vw; height: 50vw; background: var(--lavender); bottom: 10%; left: -15%;"></div>
+        <div class="blob" style="width: 40vw; height: 40vw; background: var(--mint); top: 40%; left: 5%;"></div>
+        <div class="blob" style="width: 35vw; height: 35vw; background: var(--sky); top: 60%; right: 10%;"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <img src="ug-logo.png" alt="UG Labs" onerror="this.src='https://via.placeholder.com/150x50?text=UG+LABS'">
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header id="hero">
+        <div class="expertise-badge">Research & Methodology</div>
+        <h1 id="hero-title">UG Kids Lab Overview</h1>
+        <p class="hero-subtitle">Key aspects of the UG Kids Lab program, its research foundations, testing methodology, and data architecture.</p>
+        
+        <div class="hero-visual">
+            <img src="hero-chaos-to-comprehension.svg" alt="Chaos to Comprehension" onerror="this.outerHTML='<div class=\'asset-placeholder\' style=\'max-width:700px;margin:0 auto;min-height:350px;\'>hero-chaos-to-comprehension.svg<br><small>Animated shapes transforming from chaos to order</small></div>'">
+        </div>
+    </header>
+
+    <!-- WHY THE KIDS LAB -->
+    <section id="why-kids-lab">
+        <div class="glass-card">
+            <div class="section-header">
+                <h2>Why the Kids Lab?</h2>
+            </div>
+            <div class="content-block">
+                <p>Conversational AI for children is a fundamentally new style of play. There's no existing playbook — no decades of research on how kids interact with AI characters, how they test boundaries, how they build (or lose) trust with a synthetic voice. The only way to build something that actually works is to build it with kids.</p>
+                <p>The Kids Lab exists because assumptions fail. What adults think children will say, how they think children will react, what they think will hold attention — it's almost always wrong. Real children mumble, interrupt, invent words, get distracted, push limits, and surprise you. You can't design for that in a vacuum.</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">1,200+</div>
+                    <div class="stat-label">Play Sessions Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3–13</div>
+                    <div class="stat-label">Age Range (Years)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3+</div>
+                    <div class="stat-label">Countries & Accents</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">FTUE</div>
+                    <div class="stat-label">+ Returning Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4+</div>
+                    <div class="stat-label">Testing Environments</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BEHAVIORAL SHIFT -->
+    <section id="behavioral-shift">
+        <div class="section-header">
+            <h2>The Behavioral Shift</h2>
+        </div>
+        <div class="content-block">
+            <p>Interactive play creates a fundamentally different type of experience. The shift is from lean-back to lean-forward — children are no longer passive consumers waiting for content to wash over them. They expect to drive the narrative. They expect responses. They expect the experience to react to <em>them</em>.</p>
+            <p>Passive content gets abandoned. A child who asks a question and gets silence, or a scripted non-answer, will walk away. The tolerance for "dumb" interactions is effectively zero. This isn't a preference — it's the baseline expectation shaped by touchscreens, voice assistants, and interactive everything.</p>
+        </div>
+    </section>
+
+    <!-- THE MESSY REALITY -->
+    <section id="messy-reality">
+        <div class="section-header">
+            <h2>The Messy Reality</h2>
+            <p>Why classic off-the-shelf LLMs fail with children</p>
+        </div>
+
+        <div class="waveform-section">
+            <div>
+                <img src="waveform-comparison.svg" alt="Adult vs Child Speech Patterns" class="waveform-img" onerror="this.outerHTML='<div class=\'asset-placeholder\'>waveform-comparison.svg<br><small>Adult vs. child speech patterns side-by-side</small></div>'">
+            </div>
+            <div>
+                <img src="illustration-confused-robot.png" alt="Confused Robot" style="width:100%;border-radius:30px;" onerror="this.outerHTML='<div class=\'asset-placeholder\' style=\'min-height:280px;\'>illustration-confused-robot.png<br><small>Child rambling, robot confused</small></div>'">
+            </div>
+        </div>
+
+        <div class="challenge-grid">
+            <div class="challenge-card">
+                <h4><i data-lucide="volume-2" style="width:20px;height:20px;"></i> Acoustics</h4>
+                <p>Background TV, echoing rooms, sibling noise, outdoor environments. Off-the-shelf models assume clean audio input.</p>
+            </div>
+            <div class="challenge-card">
+                <h4><i data-lucide="message-circle" style="width:20px;height:20px;"></i> Dynamics</h4>
+                <p>Interruptions, overlapping speech, invented words, non-linear logic. Children don't follow conversational conventions.</p>
+            </div>
+            <div class="challenge-card">
+                <h4><i data-lucide="zap" style="width:20px;height:20px;"></i> Latency</h4>
+                <p>Children walk away during processing delays. Response time tolerance is measured in milliseconds, not seconds.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- GROUND TRUTH -->
+    <section id="ground-truth">
+        <div class="glass-card">
+            <div class="section-header">
+                <h2>1,200+ Sessions of Ground Truth</h2>
+                <p>The largest proprietary dataset of interactive child speech. Not scripted lab recordings — real play sessions with real mess.</p>
+            </div>
+
+            <div class="stats-grid" style="max-width:700px;margin:2rem auto 0;">
+                <div class="stat-card" style="border-top:4px solid var(--peach);">
+                    <div class="stat-label" style="margin-bottom:0.5rem;">🎤</div>
+                    <div class="stat-label">Noisy Daycare</div>
+                </div>
+                <div class="stat-card" style="border-top:4px solid var(--lavender);">
+                    <div class="stat-label" style="margin-bottom:0.5rem;">🔊</div>
+                    <div class="stat-label">Echoing Rooms</div>
+                </div>
+                <div class="stat-card" style="border-top:4px solid var(--sky);">
+                    <div class="stat-label" style="margin-bottom:0.5rem;">📚</div>
+                    <div class="stat-label">Quiet Classrooms</div>
+                </div>
+                <div class="stat-card" style="border-top:4px solid var(--mint);">
+                    <div class="stat-label" style="margin-bottom:0.5rem;">🏠</div>
+                    <div class="stat-label">Home Settings</div>
+                </div>
+            </div>
+
+            <p style="text-align:center;margin-top:2rem;font-weight:500;color:var(--charcoal);">From early phonics to complex narrative logic</p>
+        </div>
+    </section>
+
+    <!-- BOUNDED SCENES -->
+    <section id="bounded-scenes">
+        <div class="two-col">
+            <div>
+                <h2 style="font-size:2.5rem;margin-bottom:1.5rem;">Bounded Scenes: The Park Metaphor</h2>
+                <p>Not one long conversation — small, scoped interactions. Each scene gets limited context, specific knowledge, defined boundaries.</p>
+                <p>Think of it like a park: kids play freely, but within a designed space. The fence isn't a limitation — it's what makes safe, free play possible.</p>
+                <p style="margin-top:1rem;"><strong>Zone examples:</strong> Story Time, Science Spark, Character Chat</p>
+            </div>
+            <div>
+                <img src="illustration-park-metaphor.png" alt="Park Metaphor" onerror="this.outerHTML='<div class=\'asset-placeholder\'>illustration-park-metaphor.png<br><small>Playground with zones — THE key visual metaphor</small></div>'">
+            </div>
+        </div>
+    </section>
+
+    <!-- RUNTIME ENFORCEMENT -->
+    <section id="runtime-enforcement">
+        <div class="section-header">
+            <h2>Runtime Enforcement</h2>
+            <p>Safety that can't be bypassed</p>
+        </div>
+
+        <div class="glass-card">
+            <div class="two-col" style="gap:3rem;">
+                <div>
+                    <img src="diagram-runtime-enforcement.svg" alt="Runtime Enforcement Architecture" onerror="this.outerHTML='<div class=\'asset-placeholder\'>diagram-runtime-enforcement.svg<br><small>Layered architecture: LLM → Enforcement → Child</small></div>'">
+                </div>
+                <div>
+                    <p style="font-size:1.15rem;">An independent layer monitors all input and output. The model doesn't check itself — a separate system enforces boundaries.</p>
+                    <p style="font-size:1.15rem;">This is architecture, not policy. The model literally cannot bypass it.</p>
+                    <div style="background:var(--mint-light);padding:1rem 1.5rem;border-radius:16px;margin-top:1.5rem;">
+                        <strong style="font-size:0.9rem;color:#15803d;">Key distinction:</strong>
+                        <p style="margin:0.5rem 0 0;font-size:1rem;">Not the model checking itself</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHILD APPROPRIATENESS TAXONOMY -->
+    <section id="taxonomy">
+        <div class="section-header">
+            <h2>Child Appropriateness Taxonomy</h2>
+            <p>Context changes everything. The same words require completely different responses.</p>
+        </div>
+
+        <p style="text-align:center;margin-bottom:2rem;font-weight:500;">Theme × Modality × Directionality</p>
+
+        <div class="taxonomy-grid">
+            <div class="taxonomy-card">
+                <span class="context-badge game">Game Context</span>
+                <p class="quote">"Kill Dr. Eggman"</p>
+                <p class="response">→ Playful response. Gaming language in gaming context is safe.</p>
+            </div>
+            <div class="taxonomy-card redirect">
+                <span class="context-badge sibling">Sibling Frustration</span>
+                <p class="quote">"Kill my brother"</p>
+                <p class="response">→ Gentle redirect. Acknowledge frustration, guide toward expression.</p>
+            </div>
+            <div class="taxonomy-card escalate">
+                <span class="context-badge safety">Safety Signal</span>
+                <p class="quote">"My father hurts me"</p>
+                <p class="response">→ Escalation path triggered. Designed response protocol activates.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROPRIETARY PIPELINE -->
+    <section id="pipeline">
+        <div class="section-header">
+            <h2>The Proprietary Pipeline</h2>
+            <p>From raw audio to AI-ready data</p>
+        </div>
+
+        <div class="pipeline-container">
+            <img src="diagram-pipeline.svg" alt="Processing Pipeline" onerror="this.outerHTML='<div class=\'asset-placeholder\' style=\'min-height:200px;\'>diagram-pipeline.svg<br><small>Raw Audio → PII Masking → Segmentation → Tagging → Output</small></div>'">
+        </div>
+
+        <div class="pipeline-outputs">
+            <div class="pipeline-output" style="border-left:3px solid var(--peach);">Intent Recognition</div>
+            <div class="pipeline-output" style="border-left:3px solid var(--lavender);">Safety Classification</div>
+            <div class="pipeline-output" style="border-left:3px solid var(--mint);">Prosody Analysis</div>
+            <div class="pipeline-output" style="border-left:3px solid var(--sky);">Behavior Patterns</div>
+        </div>
+    </section>
+
+    <!-- HIPPY CASE STUDY -->
+    <section id="hippy">
+        <div class="glass-card">
+            <div class="hippy-header">
+                <img src="hippy-logo.png" alt="HIPPY International" onerror="this.src='https://via.placeholder.com/200x80?text=HIPPY'">
+                <div>
+                    <h2 style="margin-bottom:0.5rem;">Case Study: HIPPY International</h2>
+                    <p style="margin:0;">Proof in practice</p>
+                </div>
+            </div>
+
+            <div class="two-col" style="margin-top:2rem;">
+                <div>
+                    <p>HIPPY uses the Kids Lab infrastructure to facilitate "Shared Learning Moments" — AI scaffolds parent-child bonding, never replacing the parent.</p>
+                    <p><strong>Programs include:</strong></p>
+                    <ul style="margin:1rem 0 1.5rem 1.5rem;">
+                        <li style="margin-bottom:0.5rem;"><strong>Story Quests</strong> — Interactive narratives for reading together</li>
+                        <li><strong>Science Sparks</strong> — Guided experiments for parent-child exploration</li>
+                    </ul>
+
+                    <div class="session-flow">
+                        <div class="session-step">
+                            <div class="step-number step-1">1</div>
+                            <div class="step-content">
+                                <strong>AI prompts child:</strong>
+                                <p>"What happens if we mix baking soda and vinegar?"</p>
+                            </div>
+                        </div>
+                        <div class="session-step">
+                            <div class="step-number step-2">2</div>
+                            <div class="step-content">
+                                <strong>Child responds:</strong>
+                                <p>"It's gonna explode like a volcano!"</p>
+                            </div>
+                        </div>
+                        <div class="session-step">
+                            <div class="step-number step-3">3</div>
+                            <div class="step-content">
+                                <strong>AI engages parent:</strong>
+                                <p>"Great! Can you help pour the vinegar slowly?"</p>
+                            </div>
+                        </div>
+                        <div class="session-step">
+                            <div class="step-number step-4">4</div>
+                            <div class="step-content">
+                                <strong>Celebration:</strong>
+                                <p>"You did it together! Gas bubbles made it fizz!"</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-callout">
+                        AI amplifies the parent, never replaces them.
+                    </div>
+                </div>
+                <div>
+                    <img src="illustration-parent-child-activity.png" alt="Parent and Child Activity" onerror="this.outerHTML='<div class=\'asset-placeholder\'>illustration-parent-child-activity.png<br><small>Parent + child + AI helper</small></div>'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOCIAL COMPLEXITY -->
+    <section id="social-complexity">
+        <div class="section-header">
+            <h2>Scaling Social Complexity</h2>
+            <p>The AI adapts to different social configurations — it's not one-size-fits-all.</p>
+        </div>
+
+        <div style="max-width:900px;margin:0 auto 2rem;">
+            <img src="diagram-social-configurations.svg" alt="Social Configurations" style="width:100%;border-radius:30px;" onerror="this.outerHTML='<div class=\'asset-placeholder\' style=\'min-height:250px;\'>diagram-social-configurations.svg<br><small>Solo / Duo / Group modes combined</small></div>'">
+        </div>
+
+        <div class="social-grid">
+            <div class="social-card">
+                <span class="config-label">Solo Mode</span>
+                <h4>Child ↔ AI</h4>
+                <p>Focus on agency and scaffolding. Adapts to individual learning pace and style.</p>
+            </div>
+            <div class="social-card">
+                <span class="config-label">Duo Mode</span>
+                <h4>Child ↔ AI ↔ Parent</h4>
+                <p>Mediating bonding moments. Facilitates shared learning experiences.</p>
+            </div>
+            <div class="social-card">
+                <span class="config-label">Group Mode</span>
+                <h4>Multiple Children ↔ AI</h4>
+                <p>Managing turn-taking and group dynamics. Fair participation for all.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer style="padding:4rem 10vw;text-align:center;margin-top:4rem;">
+        <img src="ug-logo.png" alt="UG Labs" style="height:50px;opacity:0.6;" onerror="this.src='https://via.placeholder.com/150x50?text=UG+LABS'">
+        <p style="margin-top:1.5rem;opacity:0.5;font-size:0.85rem;">© 2024 UG Labs. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // 1. Initialize Icons
+        lucide.createIcons();
+
+        // 2. Liquid Cursor Logic
+        const dot = document.getElementById('cursor-dot');
+        const follower = document.getElementById('cursor-follower');
+        
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(dot, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(follower, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.3 });
+        });
+
+        // Hover effect for cursor
+        const interactives = document.querySelectorAll('a, .stat-card, .challenge-card, .glass-card, .taxonomy-card, .social-card, .session-step');
+        interactives.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                gsap.to(follower, { scale: 1.8, background: 'rgba(0,0,0,0.03)', borderColor: 'transparent', duration: 0.3 });
+            });
+            el.addEventListener('mouseleave', () => {
+                gsap.to(follower, { scale: 1, background: 'transparent', borderColor: 'var(--charcoal)', duration: 0.3 });
+            });
+        });
+
+        // 3. Hero Animation
+        window.onload = () => {
+            gsap.from("#hero-title", {
+                y: 50,
+                opacity: 0,
+                duration: 1.2,
+                ease: "power3.out"
+            });
+            gsap.from(".expertise-badge", {
+                scale: 0.8,
+                opacity: 0,
+                duration: 1,
+                delay: 0.3
+            });
+            gsap.from(".hero-subtitle", {
+                y: 30,
+                opacity: 0,
+                duration: 1,
+                delay: 0.5
+            });
+            gsap.from(".hero-visual", {
+                y: 50,
+                opacity: 0,
+                duration: 1.2,
+                delay: 0.7
+            });
+        };
+
+        // 4. Scroll Driven Narratives
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Blob Parallax & Movement
+        gsap.to(".blob", {
+            scrollTrigger: {
+                scrub: 1
+            },
+            y: (i) => -200 * (i + 1),
+            rotation: 180,
+            scale: 1.1
+        });
+
+        // Section Reveal Transitions
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+            gsap.from(section, {
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top 85%",
+                },
+                opacity: 0,
+                y: 30,
+                duration: 1,
+                ease: "power2.out"
+            });
+        });
+
+        // Stagger animations for cards
+        gsap.utils.toArray('.stats-grid, .challenge-grid, .taxonomy-grid, .social-grid, .pipeline-outputs').forEach(grid => {
+            gsap.from(grid.children, {
+                scrollTrigger: {
+                    trigger: grid,
+                    start: "top 85%",
+                },
+                opacity: 0,
+                y: 20,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "power2.out"
+            });
+        });
+
+        // Session flow stagger
+        gsap.from('.session-step', {
+            scrollTrigger: {
+                trigger: '.session-flow',
+                start: "top 80%",
+            },
+            opacity: 0,
+            x: -30,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: "power2.out"
+        });
+
+        // 5. Magnetic Hero Element
+        const hero = document.getElementById('hero');
+        hero.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const x = (clientX / window.innerWidth - 0.5) * 20;
+            const y = (clientY / window.innerHeight - 0.5) * 20;
+            gsap.to("#hero-title", { x, y, duration: 0.6, ease: "power2.out" });
+        });
+
+        hero.addEventListener('mouseleave', () => {
+            gsap.to("#hero-title", { x: 0, y: 0, duration: 0.6, ease: "power2.out" });
+        });
+    </script>
+
+</body>
+</html>
